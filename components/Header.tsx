@@ -13,7 +13,7 @@ const Header = () => {
       padding: '0 15px',
       justifyContent: 'space-between',
       alignItems: 'center',
-      backgroundColor: 'grey', 
+      backgroundColor: '#303338', 
       marginTop: 0 
     },
     login: {
@@ -21,18 +21,19 @@ const Header = () => {
       justifyContent: 'center',
       alignItems: 'center',
       cursor: 'pointer',
+      color: '#1df199',
       height: 50,
       width: 50,
       fontSize: '150%',
       backgroundColor: 'inherit',
-      border: 'solid black 2px',
+      border: 'solid #1df199 2px',
     }
   }
 
     return (
       < >
       <div style={style.header}>
-        <h1>
+        <h1 style={{ color: '#1df199' }}>
           <Link href="/">
             EVENT.
           </Link>
@@ -43,7 +44,7 @@ const Header = () => {
         </div>
       </div>
       { showMenu &&
-        <DropMenu />
+        <DropMenu closeMenu={() => setMenu(false)} />
       }
       </>
     )

@@ -13,15 +13,38 @@ const Home: NextPage = () => {
   const style = {
    
     newEvent: {
+      color: '#ee6b66',
       margin: '18px auto',
+      maxWidth: 650,
       cursor: 'pointer',
       display: 'flex',
       height: 100,
-      maxWidth: 650,
       justifyContent: 'center',
       alignItems: 'center',
-      border: 'dashed grey 3px', 
+      border: 'dashed #ee6b66 3px', 
     },
+  }
+
+  const colors = [
+    '#e2c74c',
+    '#b363a1',
+    '#61c588',
+    '#dc756b',
+  ]
+
+  const prime = () => {
+    fetchLocations()
+    fetchEvents()
+  }
+
+  const fetchLocations = () => {
+    setLoading(true)
+    fetch('api/locations')
+      .then((res) => res.json())
+      .then((data) => {
+        // setEvents(data.data)
+        // setLoading(false)
+      })
   }
 
   const fetchEvents = () => {
@@ -33,7 +56,7 @@ const Home: NextPage = () => {
         setLoading(false)
       })
   }
-  useEffect(fetchEvents, [])
+  useEffect(prime, [])
   
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
@@ -49,17 +72,15 @@ const Home: NextPage = () => {
     <div>
       <Header />
       <div style={style.body}>
-        { loggedIn && 
-        <div  style={style.newEvent}>
+        <div className='hover' style={style.newEvent}>
           <a href="/newEvent">
             <h3>
               + NEW EVENT
             </h3>
           </a>
         </div>
-        }
-        { !loading &&
-          events.map(event => <EventCard key={event._id} event={event} />)
+        { (!loading && events) &&
+          events.map((event, i) => <EventCard key={event._id} color={colors[i%4]} event={event} />)
         }
       </div>
     </div>

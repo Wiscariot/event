@@ -1,14 +1,17 @@
-import { useState } from "react"
+import { userInfo } from "os"
+import { useEffect, useState } from "react"
 // import { createStore } from "redux"
 import { useSelector, useDispatch } from 'react-redux'
 import { logOff, logIn } from "../reducers/loginReducer"
 
 
-const DropMenu = () => {
+const DropMenu = ({ closeMenu }) => {
   const dispatch = useDispatch()
   // const loggedIn = useSelector(state => state.login)
+  const [signUp,setSignUp] = useState(false)
   const [loggedIn, setLoggedIn] = useState(false)
-  const [loginInfo, setInfo] = useState({ userName: '', password:'' })
+  const [error, setError] = useState('')
+  const [loginInfo, setInfo] = useState({ username: '', password:'' })
   
 
   const style = {
@@ -23,7 +26,8 @@ const DropMenu = () => {
       width: 250,
       display: 'flex',
       flexDirection: 'column',
-      backgroundColor: 'lightgrey', 
+      backgroundColor: '#444950', 
+      color: 'white',
       marginTop: 0,
       selfAlign: 'end'
     },
@@ -31,6 +35,7 @@ const DropMenu = () => {
       height: 35,
       margin: '16px 0px',
       border: 'none',
+      color: 'white',
       backgroundColor: 'inherit',
       borderBottom: 'solid black 2px'
     },
@@ -42,20 +47,74 @@ const DropMenu = () => {
     }
   }
 
-  const logIn = () => window.localStorage.setItem('loggedInUser', JSON.stringify(loginInfo)) || setLoggedIn(true)
+  const logIn = async () => {
+      const user = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginInfo),
+      })
+      if(user.ok) {
+        setLoggedIn(true)
+        window.localStorage.setItem('loggedInUser', JSON.stringify(user))
+        closeMenu()  
+      } else {
+        setError('wrong credentials')
+        setTimeout(() => {
+          setError('')
+        }, 5000)
+      }
+  }
 
+  const checkUser = () => {
+    if (window.localStorage.loggedInUser) {
+       setLoggedIn(true)
+    }
+  }
+  useEffect(checkUser, [])
+
+  const logOff = () => {
+    setLoggedIn(false)
+    window.localStorage.removeItem('loggedInUser')
+  }
+
+  const sendSignUp = async () => {
+    const passwordCheck = document.getElementById('passwordCheck').value
+
+    if(loginInfo.password === passwordCheck) {
+      const user = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginInfo),
+      })
+    }
+  }
+    
   const handleClick = () => {
-    loggedIn
-    ? 
-    : window.localStorage.removeItem('loggedInUser')
+    return signUp ? sendSignUp()
+    : !loggedIn ? logIn()
+    : logOff();
+  }
+
+  const disableButton = () => {
+    
   }
 
   return (
     <div style={style.dropmenu}>
       { !loggedIn &&
         <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <h2>{ signUp ? "Sign up" : "Login"}</h2>
+            <button onClick={() => setSignUp(!signUp)}>
+              { !signUp ? "Sign Up" : "Login" }
+            </button>
+          </div>
           <input 
-            onChange={e => setInfo({ ...loginInfo, userName: e.target.value })}
+            onChange={e => setInfo({ ...loginInfo, username: e.target.value })}
             id="username" 
             placeholder="Username" 
             style={style.input} 
@@ -67,18 +126,25 @@ const DropMenu = () => {
             style={style.input} 
             type="password" 
           />
-          <button onClick={handleClick} style={style.login}>
-            Login
-          </button>
+          { signUp &&
+            <input 
+              id="passwordCheck"
+              placeholder="Re-enter password" 
+              style={style.input} 
+              type="password" 
+            />
+          }
         </div>
       }
-      { loggedIn &&
-        <div>
-          <button onClick={handleClick} style={style.login}>
-            Log Off
-          </button>
-        </div>
+      { error && 
+        <small>{ error }</small> 
       }
+      <button onClick={handleClick} style={style.login}>
+        { 
+        signUp ? 'Sign up' 
+        : !loggedIn ? 'Login' 
+        : 'Log off' }
+      </button>
     </div>
   )
 }
