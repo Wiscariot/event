@@ -1,36 +1,36 @@
 import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import EventCard from '../components/EventCard'
 import Header from '../components/Header'
 
 const Home: NextPage = () => {
+  const router = useRouter()
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [loggedIn, setLoggedIn] = useState(false)
 
-
-  const style = {
-   
-    newEvent: {
-      color: '#ee6b66',
-      margin: '18px auto',
-      maxWidth: 650,
-      cursor: 'pointer',
-      display: 'flex',
-      height: 100,
-      justifyContent: 'center',
-      alignItems: 'center',
-      border: 'dashed #ee6b66 3px', 
-    },
-  }
+  // const colors = [
+  //   '#e2c74c',
+  //   '#b363a1',
+  //   '#61c588',
+  //   '#dc756b',
+  // ]
 
   const colors = [
     '#e2c74c',
-    '#b363a1',
-    '#61c588',
-    '#dc756b',
+    '#f430a5',
+    '#3ab7b4',
+    '#b038ac',
   ]
+
+  const checkUser = () => {
+    if(!window.localStorage.loggedInUser) {
+      router.push('/login')
+    }
+  }
+  useEffect(checkUser, [loggedIn])
 
   const prime = () => {
     fetchLocations()
@@ -42,8 +42,6 @@ const Home: NextPage = () => {
     fetch('api/locations')
       .then((res) => res.json())
       .then((data) => {
-        // setEvents(data.data)
-        // setLoading(false)
       })
   }
 
@@ -63,14 +61,33 @@ const Home: NextPage = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setLoggedIn(true)
-      // noteService.setToken(user.token)
     }
   }, [])
 
+  const logOff = () => {
+    setLoggedIn(false)
+    window.localStorage.removeItem('loggedInUser')
+    router.push('/login')
+  }
+
+  const style = {
+   
+    newEvent: {
+      color: '#ee6b66',
+      margin: '18px auto',
+      maxWidth: 650,
+      cursor: 'pointer',
+      display: 'flex',
+      height: 100,
+      justifyContent: 'center',
+      alignItems: 'center',
+      border: 'dashed #ee6b66 3px', 
+    },
+  }
 
   return (
     <div>
-      <Header />
+      <Header logOff={logOff} />
       <div style={style.body}>
         <div className='hover' style={style.newEvent}>
           <a href="/newEvent">

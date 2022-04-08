@@ -14,15 +14,15 @@ export default async (req, res) => {
         
             
             try {
-            const answer = await Answer.findById(id)
+            const answers = await Answer.find({ event: id })
             
-            if (!answer) {
-                return res.status(400).json({ success: false})
+            if (!answers) {
+                return res.status(400).json({ success: false })
             }
 
-            res.status(200).json({ success: true, data: answer })
+            res.status(200).json({ success: true, data: answers })
         } catch (error) {
-            res.status(400).json({ success: false})
+            res.status(400).json({ success: false, error })
         }
         break;
 

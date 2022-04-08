@@ -15,7 +15,7 @@ export default async (req, res) => {
         
             
             try {
-            const event = await Event.findById(id).populate('location')
+            const event = await Event.findById(id).populate('location').populate('rsvp').exec()
             
             if (!event) {
                 return res.status(400).json({ success: false, error })

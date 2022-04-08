@@ -5,12 +5,6 @@ const LocationSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Location address missing'],
     },
-    name: {
-        type: String,
-        required: [true, 'Location name missing'],
-        unique: [true, 'Location with this name already exists'],
-        trim: true,
-    },
     description: {
         type: String,
     },

@@ -1,14 +1,14 @@
 import Link from "next/link"
 import { useState } from "react";
-import { ImMenu } from 'react-icons/im'
-import DropMenu from "./DropMenu"
+import { RiLogoutBoxRLine } from 'react-icons/ri'
+import { logOff } from "../reducers/loginReducer";
 
-const Header = () => {
-
-  const [showMenu, setMenu] = useState(false);
+const Header = ({ logOff }) => {
 
   const style = {
     header: {
+      position:'sticky',
+      top: 0,
       display: 'flex',
       padding: '0 15px',
       justifyContent: 'space-between',
@@ -21,31 +21,28 @@ const Header = () => {
       justifyContent: 'center',
       alignItems: 'center',
       cursor: 'pointer',
-      color: '#1df199',
+      color: '#e2c74c',
       height: 50,
       width: 50,
       fontSize: '150%',
       backgroundColor: 'inherit',
-      border: 'solid #1df199 2px',
+      border: 'solid #e2c74c 2px',
     }
   }
 
     return (
       < >
       <div style={style.header}>
-        <h1 style={{ color: '#1df199' }}>
+        <h1 style={{ color: '#e2c74c' }}>
           <Link href="/">
-            EVENT.
+            Event.
           </Link>
         </h1>
 
-        <div onClick={() => setMenu(!showMenu)} style={style.login}>
-          <ImMenu  />
+        <div onClick={logOff} style={style.login}>
+          <RiLogoutBoxRLine  />
         </div>
       </div>
-      { showMenu &&
-        <DropMenu closeMenu={() => setMenu(false)} />
-      }
       </>
     )
 }
