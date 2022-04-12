@@ -1,21 +1,18 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { setEnvironmentData } from 'worker_threads'
 import Header from '../components/Header'
 
 const Home: NextPage = () => {
   const router = useRouter()
   const [newEvent, setNewEvent] = useState({ location: { address: '' }})
   const [locations, setLocations] = useState([])
-  const [newLocation, setNewLocation] = useState({})
 
     const getLocations = () => {
       fetch('api/locations')
         .then((res) => res.json())
         .then((data) => {
           setLocations(data.data)
-          // setLoading(false)
         })
     }
     useEffect(getLocations, [])
@@ -42,14 +39,18 @@ const Home: NextPage = () => {
     }
     
     const handleSubmit = async () => {
-      const locationId = isExistingLocation 
+
+      console.log('LOCATION', newEvent.location);
+      
+      const locationId = isExistingLocation() 
         ? locations.find(location => location.address === newEvent.location.address)._id
         : await createLocation()._id
 
-        setNewEvent({ ...newEvent, location: locationId })
+        console.log('LOCATIONID ', locationId);
+      setNewEvent({ ...newEvent, location: locationId })
 
       createEvent()
-      // router.push('/')
+
     }
 
   const handleChange = e => {
@@ -122,8 +123,11 @@ const Home: NextPage = () => {
           Description
           <textarea onChange={handleChange} name="description" />
         </div>
-        <button style={{ marginBottom: 24 }} className='btn' onClick={handleSubmit}>
+        <button type="button" style={{ marginBottom: 24 }} className='btn' onClick={handleSubmit}>
           Create Event
+        </button>
+        <button type="button" style={{ marginBottom: 24 }} className='btn' onClick={() => console.log('EVENT ', newEvent)}>
+          LOG
         </button>
       </form>
     </div>
